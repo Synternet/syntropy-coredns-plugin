@@ -89,9 +89,6 @@ func query(dns_name string, controller_url string, token string, ttl time.Durati
 
 	ip, ok := service_ips[dns_name]
 
-	log.Info(dns_name)
-	log.Info(service_ips)
-
 	localCache.Set(dns_name, ttlmap.NewItem(ip, ttlmap.WithTTL(ttl)), nil)
 
 	if !ok {
@@ -108,7 +105,6 @@ func get_service_ips(controller_url string, token string, ttl time.Duration) map
 	client := &http.Client{}
 
 	for id, agent := range agents {
-		log.Info(fmt.Sprintf("%s/api/platform/agent-services?agent-id=%v", controller_url, id))
 		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/platform/agent-services?agent-ids=%v", controller_url, id), nil)
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
 
@@ -138,7 +134,12 @@ func get_service_ips(controller_url string, token string, ttl time.Duration) map
 			if !service.Active {
 				continue
 			}
-			service_ips[fmt.Sprintf("%s.%s", service.Name, agent.Name)] = service.Subnets[0].Ip
+
+			dns_name := fmt.Sprintf("%s.%s", service.Name, agent.Name)
+			ip := service.Subnets[0].Ip
+
+			service_ips[dns_name] = service.Subnets[0].Ip
+			localCache.Set(dns_name, ttlmap.NewItem(ip, ttlmap.WithTTL(ttl)), nil)
 		}
 	}
 
