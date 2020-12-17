@@ -8,7 +8,7 @@ You can either compile it manually or use the provided Docker image (syntropynet
 The default cache duration is set as 300 seconds, however it is configurable by the env variable ```LOCAL_CACHE_DURATION```.
 The command needed to run a default instance of Syntropy CoreDNS is
 ```
-docker run -d -e SYNTROPY_CONTROLLER_URL="https://controller-prod-server.noia.network" -e SYNTROPY_USERNAME="<YOUR_USERNAME>" -e SYNTROPY_PASSWORD="<YOUR_PASSWORD>" syntropy/coredns 
+docker run -d -e SYNTROPY_CONTROLLER_URL="https://controller-prod-server.noia.network" -e SYNTROPY_USERNAME="<YOUR_USERNAME>" -e SYNTROPY_PASSWORD="<YOUR_PASSWORD>" syntropynet/coredns 
 ```
 
 ## Manually compile CoreDNS
