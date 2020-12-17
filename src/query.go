@@ -135,9 +135,11 @@ func get_service_ips(controller_url string, token string, ttl time.Duration) map
 				continue
 			}
 
+			if len(service.Subnets) < 1 {
+				continue
+			}
 			dns_name := fmt.Sprintf("%s.%s", service.Name, agent.Name)
 			ip := service.Subnets[0].Ip
-
 			service_ips[dns_name] = service.Subnets[0].Ip
 			localCache.Set(dns_name, ttlmap.NewItem(ip, ttlmap.WithTTL(ttl)), nil)
 		}

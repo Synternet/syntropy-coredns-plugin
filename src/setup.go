@@ -75,7 +75,6 @@ func newSyntropy(c *caddy.Controller) (Syntropy, error) {
 	}
 
 	if url == "" || username == "" || password == "" || localCacheDuration == "" {
-		log.Info(url, username, password, localCacheDuration)
 		return Syntropy{}, errors.New("Failed to parse Syntropy DNS config")
 	}
 
