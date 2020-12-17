@@ -11,7 +11,7 @@ The command needed to run a default instance of Syntropy CoreDNS is
 docker run -d -e SYNTROPY_CONTROLLER_URL="https://controller-prod-server.noia.network" -e SYNTROPY_USERNAME="<YOUR_USERNAME>" -e SYNTROPY_PASSWORD="<YOUR_PASSWORD>" syntropy/coredns 
 ```
 
-##
+## Manually compile CoreDNS
 
 - Add the line ```syntropy:syntropy``` to coredns/plugin.cfg, preferably after the ```acl/acl``` line (priority of plugins matters).
 - Move all of the directory contents of ```src/``` to ```coredns/plugin/syntropy/```.
