@@ -79,10 +79,10 @@ func login(controller_url string, username string, password string) string {
 	return token.AccessToken
 }
 
-func query(dns_name string, controller_url string, token string, ttl time.Duration) string {
+func query(dns_name string, controller_url string, token string, ttl time.Duration) []string {
 	item, err := localCache.Get(dns_name)
 	if err == nil {
-		return item.Value().(string)
+		return item.Value().([]string)
 	}
 
 	service_ips := get_service_ips(controller_url, token, ttl)
@@ -92,15 +92,15 @@ func query(dns_name string, controller_url string, token string, ttl time.Durati
 	localCache.Set(dns_name, ttlmap.NewItem(ip, ttlmap.WithTTL(ttl)), nil)
 
 	if !ok {
-		return ""
+		return make([]string, 0)
 	}
 
 	return ip
 }
 
-func get_service_ips(controller_url string, token string, ttl time.Duration) map[string]string {
+func get_service_ips(controller_url string, token string, ttl time.Duration) map[string][]string {
 	agents := get_agents(controller_url, token)
-	service_ips := make(map[string]string)
+	service_ips := make(map[string][]string)
 
 	client := &http.Client{}
 
@@ -131,6 +131,8 @@ func get_service_ips(controller_url string, token string, ttl time.Duration) map
 		err = json.Unmarshal([]byte(jsonAns), &syntropyResp)
 
 		for _, service := range syntropyResp.Data {
+			ips := make([]string, 0)
+
 			if !service.Active {
 				continue
 			}
@@ -139,9 +141,12 @@ func get_service_ips(controller_url string, token string, ttl time.Duration) map
 				continue
 			}
 			dns_name := fmt.Sprintf("%s.%s", service.Name, agent.Name)
-			ip := service.Subnets[0].Ip
-			service_ips[dns_name] = service.Subnets[0].Ip
-			localCache.Set(dns_name, ttlmap.NewItem(ip, ttlmap.WithTTL(ttl)), nil)
+			for _, subnet := range service.Subnets {
+				ip := subnet.Ip
+				ips = append(ips, ip)
+			}
+			service_ips[dns_name] = ips
+			localCache.Set(dns_name, ttlmap.NewItem(ips, ttlmap.WithTTL(ttl)), nil)
 		}
 	}
 
