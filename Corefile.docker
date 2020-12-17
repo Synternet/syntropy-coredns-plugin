@@ -1,0 +1,11 @@
+. {
+  syntropy {
+    url {$SYNTROPY_CONTROLLER_URL} 
+    username {$SYNTROPY_USERNAME} 
+    password {$SYNTROPY_PASSWORD} 
+    localCacheDuration {$LOCAL_CACHE_DURATION} 
+    fallthrough
+  }
+  log
+  forward . /etc/resolv.conf 
+}
